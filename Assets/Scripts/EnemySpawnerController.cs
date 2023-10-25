@@ -14,7 +14,7 @@ public class EnemySpawnerController : MonoBehaviour
     void Start()
     {
         _nbEnemies = _enemiesSpawnPosition.Count;
-        GenerateGraph graphGenerator = GameObject.Find("Grid").GetComponent<GenerateGraph>();
+        GraphController graphGenerator = GameObject.Find("Grid").GetComponent<GraphController>();
         Vector3 cellSize = graphGenerator.grid.cellSize;
         for (int i = 0; i < _nbEnemies; i++)
         {
@@ -22,7 +22,6 @@ public class EnemySpawnerController : MonoBehaviour
                 (float)(_enemiesSpawnPosition[i].y * cellSize.y + graphGenerator.bounds.Item1.y + 0.5));
             GameObject enemy = Instantiate(_enemies[i], pos, Quaternion.identity);
             enemy.name = "Enemy_"+i;
-            enemy.GetComponent<EnemyController>().graphPosition = _enemiesSpawnPosition[i];
         }
     }
 

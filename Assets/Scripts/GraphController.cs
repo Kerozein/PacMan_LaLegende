@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class GenerateGraph : MonoBehaviour
+public class GraphController : MonoBehaviour
 {
     [HideInInspector] public Grid grid;
     [HideInInspector] public Graph graph;
