@@ -5,6 +5,8 @@ using UnityEngine;
 public class Tile
 {
     public Vector2Int position { get; }
+    public int cost { get;}
+
     private HashSet<TileType> _types;
 
     public Tile(Vector2Int pos)
@@ -80,5 +82,15 @@ public class Graph
     private bool IsGround(Vector2Int position)
     {
         return _grid[position.x, position.y].GetTypes().Contains(TileType.Ground);
+    }
+
+    public List<Tile> GetNodes()
+    {
+        List<Tile> nodes = new List<Tile>();
+        foreach (Tile tile in _grid)
+        {
+            nodes.Add(tile);
+        }
+        return nodes;
     }
 }

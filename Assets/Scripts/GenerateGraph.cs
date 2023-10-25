@@ -6,9 +6,9 @@ using UnityEngine.Tilemaps;
 
 public class GenerateGraph : MonoBehaviour
 {
-    [HideInInspector] private Grid grid;
+    [HideInInspector] public Grid grid;
     [HideInInspector] public Graph graph;
-    [HideInInspector] private Tuple<Vector2, Vector2> bounds;
+    [HideInInspector] public Tuple<Vector2, Vector2> bounds;
     [HideInInspector] private int Rows;
     [HideInInspector] private int Columns;
 
