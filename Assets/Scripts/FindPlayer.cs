@@ -15,9 +15,14 @@ public class FindPlayer : MonoBehaviour
     {
         _graph = GameObject.Find("Grid").GetComponent<GraphController>().graph;
         _player = GameObject.Find("Player");
+    }
+
+    private void OnDrawGizmos()
+    {
         Tile start = _graph.GetTile(GetComponent<EnemyController>().enemyPosition);
         Tile end = _graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
         Queue<Tile> path = Dijkstra(start, end);
+        Toolbox.DrawPath(path, GetComponent<EnemyController>()._graphController, Color.red);
     }
 
     Queue<Tile> Dijkstra(Tile start, Tile goal)
