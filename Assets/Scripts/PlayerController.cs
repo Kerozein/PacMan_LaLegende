@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] public Vector2Int playerPosition;
-    [SerializeField] [Range(1,3)] public float speed;
+    [SerializeField] [Range(1,10)] public float speed;
     
     [HideInInspector] SpriteRenderer _spriteRenderer;
 
@@ -21,10 +21,12 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         playerPosition = Toolbox.ConvertWorldPosToGraphPos(gameObject.transform.position, _graphController);
+        Vector3 basePosition = gameObject.transform.position;
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         if (verticalInput != 0)
         {
+            _spriteRenderer.flipX = false;
             if (verticalInput > 0.1 && playerDirection != Direction.North)
             {
                 playerDirection = Direction.North;
@@ -35,7 +37,12 @@ public class PlayerController : MonoBehaviour
                 playerDirection = Direction.South;
                 transform.rotation = Quaternion.Euler(0, 0, -90);
             }
-            gameObject.transform.position += Vector3.up * verticalInput * speed * 0.01f;
+            Vector2Int newTilePos = Toolbox.ConvertWorldPosToGraphPos(
+                gameObject.transform.position + Vector3.up * verticalInput * speed * Time.deltaTime, _graphController);
+            if (_graphController.graph.GetTile(newTilePos).GetTypes().Contains(TileType.Ground))
+            {
+                gameObject.transform.position += Vector3.up * verticalInput * speed * Time.deltaTime;
+            }
         }
             
         else if (horizontalInput != 0)
@@ -51,7 +58,12 @@ public class PlayerController : MonoBehaviour
                 playerDirection = Direction.West;
                 _spriteRenderer.flipX = true;
             }
-            gameObject.transform.position += Vector3.right * horizontalInput * speed * 0.01f;
+           Vector2Int newTilePos = Toolbox.ConvertWorldPosToGraphPos(
+               gameObject.transform.position + Vector3.right * horizontalInput * speed * Time.deltaTime, _graphController);
+            if (_graphController.graph.GetTile(newTilePos).GetTypes().Contains(TileType.Ground))
+            {
+                gameObject.transform.position += Vector3.right * horizontalInput * speed * Time.deltaTime;
+            }
         }
             
     }
