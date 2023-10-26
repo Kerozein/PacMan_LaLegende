@@ -120,7 +120,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8941b75f8e88c8641a54a949e0a011e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphPosition: {x: 0, y: 0}
+  enemyPosition: {x: 0, y: 0}
+  _player: {fileID: 0}
+  speed: 1
+  _graphController: {fileID: 0}
 --- !u!114 &427782322905210732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,4 +136,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6030a9eb5cb54f341a58b8f60a073e56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: 0}

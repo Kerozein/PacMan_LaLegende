@@ -27,4 +27,48 @@ public static class Toolbox
             Gizmos.DrawSphere(posOffset, 0.2f);
         }
     }
+
+    public static Queue<Tile> Dijkstra(Tile start, Tile goal, Graph _graph)
+    {
+        Dictionary<Tile, Tile> NextTileToGoal = new Dictionary<Tile, Tile>();
+        Dictionary<Tile, int> costToReachTile = new Dictionary<Tile, int>();//Total Movement Cost to reach the tile
+
+        PriorityQueue<Tile> frontier = new PriorityQueue<Tile>();
+        frontier.Enqueue(goal, 0);
+        costToReachTile[goal] = 0;
+
+        while (frontier.count > 0)
+        {
+            Tile curTile = frontier.Dequeue();
+            if (curTile == start)
+                break;
+
+            foreach (var tupleNeighbor in _graph.GetNeighbors(curTile))
+            {
+                Tile neighbor = _graph.GetTile(tupleNeighbor.Item2);
+                int newCost = costToReachTile[curTile] + neighbor.cost;
+                if (costToReachTile.ContainsKey(neighbor) == false || newCost < costToReachTile[neighbor])
+                {
+                    costToReachTile[neighbor] = newCost;
+                    int priority = newCost;
+                    frontier.Enqueue(neighbor, priority);
+                    NextTileToGoal[neighbor] = curTile;
+                }
+            }
+        }
+
+        if (NextTileToGoal.ContainsKey(start) == false)
+        {
+            return null;
+        }
+
+        Queue<Tile> path = new Queue<Tile>();
+        Tile pathTile = start;
+        while (goal != pathTile)
+        {
+            pathTile = NextTileToGoal[pathTile];
+            path.Enqueue(pathTile);
+        }
+        return path;
+    }
 }
