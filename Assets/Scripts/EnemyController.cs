@@ -23,15 +23,18 @@ public class EnemyController : MonoBehaviour
         Tile start = _graphController.graph.GetTile(GetComponent<EnemyController>().enemyPosition);
         Tile end = _graphController.graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
         Queue<Tile> path = Toolbox.Dijkstra(start, end, _graphController.graph);
-        Tile tile = path.Dequeue();
-        if (tile != null)
+        if(path != null)
         {
-            Direction direction = Direction.Null;
-            if (tile.position.x > enemyPosition.x) direction = Direction.East;
-            if (tile.position.x < enemyPosition.x) direction = Direction.West;
-            if (tile.position.y > enemyPosition.y) direction = Direction.North;
-            if (tile.position.y < enemyPosition.y) direction = Direction.South;
-            MoveToward(direction);
+            Tile tile = path.Dequeue();
+            if (tile != null)
+            {
+                Direction direction = Direction.Null;
+                if (tile.position.x > enemyPosition.x) direction = Direction.East;
+                if (tile.position.x < enemyPosition.x) direction = Direction.West;
+                if (tile.position.y > enemyPosition.y) direction = Direction.North;
+                if (tile.position.y < enemyPosition.y) direction = Direction.South;
+                MoveToward(direction);
+            }
         }
     }
 
