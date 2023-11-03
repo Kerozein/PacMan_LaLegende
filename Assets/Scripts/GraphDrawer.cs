@@ -22,7 +22,8 @@ public class GraphDrawer : MonoBehaviour
         Tile start = _graph.GetTile(GetComponent<EnemyController>().enemyPosition);
         Tile end = _graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
         Queue<Tile> path = Toolbox.Dijkstra(start, end, _graph);
-        Toolbox.DrawPath(path, GetComponent<EnemyController>()._graphController, Color.red);
+        if(path != null)
+            Toolbox.DrawPath(path, GetComponent<EnemyController>()._graphController, Color.red);
     }
 
 }

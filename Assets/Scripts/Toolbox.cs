@@ -22,7 +22,8 @@ public static class Toolbox
         Gizmos.color = color;
         while(path.Count > 0)
         {
-            var pos = ConvertGraphPosToLocalPos(path.Dequeue().position, graphGen);
+            var tile = path.Dequeue();
+            var pos = ConvertGraphPosToLocalPos(graphGen.graph.GetTilePos(tile), graphGen);
             var posOffset = new Vector2(pos.x + 0.5f, pos.y + 0.5f);
             Gizmos.DrawSphere(posOffset, 0.2f);
         }
@@ -42,10 +43,12 @@ public static class Toolbox
             Tile curTile = frontier.Dequeue();
             if (curTile == start)
                 break;
+            Vector2Int p = _graph.GetTilePos(curTile);
 
-            foreach (var tupleNeighbor in _graph.GetNeighbors(curTile))
+            foreach (var neighbor in curTile.GetNeighbors())
             {
-                Tile neighbor = _graph.GetTile(tupleNeighbor.Item2);
+
+                Vector2Int p2 = _graph.GetTilePos(neighbor);
                 int newCost = costToReachTile[curTile] + neighbor.cost;
                 if (costToReachTile.ContainsKey(neighbor) == false || newCost < costToReachTile[neighbor])
                 {

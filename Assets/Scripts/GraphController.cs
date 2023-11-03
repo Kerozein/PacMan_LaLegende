@@ -20,6 +20,7 @@ public class GraphController : MonoBehaviour
         Columns = (int)(bounds.Item2[1] - bounds.Item1[1]);
         graph = new Graph(Rows, Columns);
         FillGrid();
+        graph.FillGraphNeighbors();
     }
 
     private Tuple<Vector2, Vector2> GetGridBounds()
@@ -43,6 +44,7 @@ public class GraphController : MonoBehaviour
 
         return new Tuple<Vector2, Vector2>(min, max);
     }
+
     private void FillGrid()
     {
         int ground = LayerMask.NameToLayer("Ground");
@@ -62,7 +64,6 @@ public class GraphController : MonoBehaviour
                     {
                         int layer = tilemap.gameObject.layer;
                         if (layer == ground) graph.AddType(new Vector2Int(x, y), TileType.Ground);
-                        else if (layer == wall) graph.AddType(new Vector2Int(x, y), TileType.Wall);
                     }
 
                 }

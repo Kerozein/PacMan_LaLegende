@@ -1,18 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Tile
 {
-    public Vector2Int position { get; }
     public int cost { get;}
+
+    private List<Tile> _neighbors;
 
     private HashSet<TileType> _types;
 
-    public Tile(Vector2Int pos)
+    public Tile()
     {
-        position = pos;
         _types = new HashSet<TileType>();
+        _neighbors = new List<Tile>();
     }
 
     public void AddType(TileType type)
@@ -24,49 +29,49 @@ public class Tile
     {
         return _types;
     }
+
+    public void AddNeighbor(Tile tile)
+    {
+        _neighbors.Add(tile);
+    }
+
+    public List<Tile> GetNeighbors()
+    {
+        return _neighbors;
+    }
 }
 
 public class Graph
 {
-    private Tile[,] _grid;
+    private Dictionary<Vector2Int, Tile> _nodes;
+
+    private int _height;
+    private int _width;
+
 
     public Graph(int height, int width)
     {
-        _grid = new Tile[height, width];
-        for (int x = 0; x < height; x++)
-            for (int y = 0; y < width; y++)
-                _grid[x, y] = new Tile(new Vector2Int(x,y));
-        
+        _height = height;
+        _width = width;
+        _nodes = new Dictionary<Vector2Int, Tile>();
     }
 
     public void AddType(Vector2Int pos, TileType type)
     {
-        _grid[pos.x, pos.y].AddType(type);
+        if (!_nodes.ContainsKey(pos))
+        {
+            _nodes.Add(pos, new Tile());
+        }
+        _nodes[pos].AddType(type);
     }
 
-    public Tile GetTile(Vector2Int position)
+    public Tile GetTile(Vector2Int pos)
     {
-        return _grid[position.x, position.y];
-    }
-
-    
-    public List<Tuple<Direction, Vector2Int>> GetNeighbors(Tile tile)
-    {
-        List<Tuple<Direction, Vector2Int>> neighbors = new List<Tuple<Direction, Vector2Int>>();
-        
-        Vector2Int up = tile.position + new Vector2Int(0,1);
-        if(IsValidNeighbor(up)) neighbors.Add(new Tuple<Direction, Vector2Int>(Direction.North, up));
-
-        Vector2Int down = tile.position + new Vector2Int(0,-1);
-        if (IsValidNeighbor(down)) neighbors.Add(new Tuple<Direction, Vector2Int>(Direction.South, down));
-
-        Vector2Int left = tile.position + new Vector2Int(-1,0);
-        if (IsValidNeighbor(left)) neighbors.Add(new Tuple<Direction, Vector2Int>(Direction.West, left));
-
-        Vector2Int right = tile.position + new Vector2Int(1,0);
-        if (IsValidNeighbor(right)) neighbors.Add(new Tuple<Direction, Vector2Int>(Direction.East, right));
-
-        return neighbors;
+        if (_nodes.ContainsKey(pos))
+        {
+            return _nodes[pos];
+        }
+        return null;
     }
 
     private bool IsValidNeighbor(Vector2Int position)
@@ -76,21 +81,48 @@ public class Graph
 
     private bool IsInGrid(Vector2Int position)
     {
-        return position.x >= 0 && position.x < _grid.GetLength(0) && position.y >= 0 && position.y < _grid.GetLength(1);
+        return _nodes.ContainsKey(position);
     }
 
     private bool IsGround(Vector2Int position)
     {
-        return _grid[position.x, position.y].GetTypes().Contains(TileType.Ground);
+        return GetTile(position).GetTypes().Contains(TileType.Ground);
     }
 
     public List<Tile> GetNodes()
     {
-        List<Tile> nodes = new List<Tile>();
-        foreach (Tile tile in _grid)
+        return _nodes.Values.ToList();
+    }
+
+    public void FillGraphNeighbors()
+    {
+        foreach (var node in _nodes)
         {
-            nodes.Add(tile);
+            Vector2Int position = node.Key;
+            Tile tile = node.Value;
+
+            Vector2Int up = position + new Vector2Int(0, 1);
+            if (IsValidNeighbor(up)) tile.AddNeighbor(GetTile(up));
+
+            Vector2Int down = position + new Vector2Int(0, -1);
+            if (IsValidNeighbor(down)) tile.AddNeighbor(GetTile(down));
+
+            Vector2Int left = position + new Vector2Int(-1, 0);
+            if (IsValidNeighbor(left)) tile.AddNeighbor(GetTile(left));
+
+            Vector2Int right = position + new Vector2Int(1, 0);
+            if (IsValidNeighbor(right)) tile.AddNeighbor(GetTile(right));
         }
-        return nodes;
+    }
+
+    public Vector2Int GetTilePos(Tile tile)
+    {
+        if (_nodes.ContainsValue(tile))
+        {
+            var tuple = _nodes.FirstOrDefault(x => x.Value == tile);
+            return tuple.Key;
+        }
+
+        return new Vector2Int(-1,-1);
     }
 }

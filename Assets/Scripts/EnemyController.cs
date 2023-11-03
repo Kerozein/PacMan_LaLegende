@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
@@ -26,13 +27,14 @@ public class EnemyController : MonoBehaviour
         if(path != null)
         {
             Tile tile = path.Dequeue();
+            Vector2Int tilePosition = _graphController.graph.GetTilePos(tile);
             if (tile != null)
             {
                 Direction direction = Direction.Null;
-                if (tile.position.x > enemyPosition.x) direction = Direction.East;
-                if (tile.position.x < enemyPosition.x) direction = Direction.West;
-                if (tile.position.y > enemyPosition.y) direction = Direction.North;
-                if (tile.position.y < enemyPosition.y) direction = Direction.South;
+                if (tilePosition.x > enemyPosition.x) direction = Direction.East;
+                if (tilePosition.x < enemyPosition.x) direction = Direction.West;
+                if (tilePosition.y > enemyPosition.y) direction = Direction.North;
+                if (tilePosition.y < enemyPosition.y) direction = Direction.South;
                 MoveToward(direction);
             }
         }
