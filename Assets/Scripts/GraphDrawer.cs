@@ -9,11 +9,13 @@ using UnityEngine.Tilemaps;
 public class GraphDrawer : MonoBehaviour
 {
     private Graph _graph;
+    private GraphController _graphController;
     [HideInInspector] private GameObject _player;
 
     private void Start()
     {
-        _graph = GameObject.Find("Grid").GetComponent<GraphController>().graph;
+        _graphController = GameObject.Find("Grid").GetComponent<GraphController>();
+        _graph = _graphController.graph;
         _player = GameObject.Find("Player");
     }
 
@@ -21,9 +23,9 @@ public class GraphDrawer : MonoBehaviour
     {
         Tile start = _graph.GetTile(GetComponent<EnemyController>().enemyPosition);
         Tile end = _graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
-        Queue<Tile> path = Toolbox.Dijkstra(start, end, _graph);
+        Queue<Tile> path = Toolbox.Dijkstra(start, end, _graphController.simplifiedGraph);
         if(path != null)
-            Toolbox.DrawPath(path, GetComponent<EnemyController>()._graphController, Color.red);
+            Toolbox.DrawPath(path, _graphController, Color.red);
     }
 
 }

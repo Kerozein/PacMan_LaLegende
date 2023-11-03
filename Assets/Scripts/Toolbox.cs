@@ -23,7 +23,7 @@ public static class Toolbox
         while(path.Count > 0)
         {
             var tile = path.Dequeue();
-            var pos = ConvertGraphPosToLocalPos(graphGen.graph.GetTilePos(tile), graphGen);
+            var pos = ConvertGraphPosToLocalPos(tile.GetPosition(), graphGen);
             var posOffset = new Vector2(pos.x + 0.5f, pos.y + 0.5f);
             Gizmos.DrawSphere(posOffset, 0.2f);
         }
@@ -31,6 +31,7 @@ public static class Toolbox
 
     public static Queue<Tile> Dijkstra(Tile start, Tile goal, Graph _graph)
     {
+        if(start == null || goal == null || _graph == null) return null;
         Dictionary<Tile, Tile> NextTileToGoal = new Dictionary<Tile, Tile>();
         Dictionary<Tile, int> costToReachTile = new Dictionary<Tile, int>();//Total Movement Cost to reach the tile
 
@@ -43,19 +44,17 @@ public static class Toolbox
             Tile curTile = frontier.Dequeue();
             if (curTile == start)
                 break;
-            Vector2Int p = _graph.GetTilePos(curTile);
 
-            foreach (var neighbor in curTile.GetNeighbors())
+            foreach (var link in curTile.GetLinksNeighbors())
             {
 
-                Vector2Int p2 = _graph.GetTilePos(neighbor);
-                int newCost = costToReachTile[curTile] + neighbor.cost;
-                if (costToReachTile.ContainsKey(neighbor) == false || newCost < costToReachTile[neighbor])
+                int newCost = costToReachTile[curTile] + link.cost;
+                if (costToReachTile.ContainsKey(link.GetEnd()) == false || newCost < costToReachTile[link.GetEnd()])
                 {
-                    costToReachTile[neighbor] = newCost;
+                    costToReachTile[link.GetEnd()] = newCost;
                     int priority = newCost;
-                    frontier.Enqueue(neighbor, priority);
-                    NextTileToGoal[neighbor] = curTile;
+                    frontier.Enqueue(link.GetEnd(), priority);
+                    NextTileToGoal[link.GetEnd()] = curTile;
                 }
             }
         }

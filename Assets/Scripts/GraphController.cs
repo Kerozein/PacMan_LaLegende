@@ -8,6 +8,7 @@ public class GraphController : MonoBehaviour
 {
     [HideInInspector] public Grid grid;
     [HideInInspector] public Graph graph;
+    [HideInInspector] public Graph simplifiedGraph;
     [HideInInspector] public Tuple<Vector2, Vector2> bounds;
     [HideInInspector] private int Rows;
     [HideInInspector] private int Columns;
@@ -20,7 +21,10 @@ public class GraphController : MonoBehaviour
         Columns = (int)(bounds.Item2[1] - bounds.Item1[1]);
         graph = new Graph(Rows, Columns);
         FillGrid();
-        graph.FillGraphNeighbors();
+        graph.Init();
+
+        simplifiedGraph = graph;
+        simplifiedGraph.Simplify();
     }
 
     private Tuple<Vector2, Vector2> GetGridBounds()
