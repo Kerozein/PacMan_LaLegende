@@ -73,4 +73,47 @@ public static class Toolbox
         }
         return path;
     }
+
+    public static Queue<Tile> AStar(Tile start, Tile goal, Graph _graph)
+    {
+        Dictionary<Tile, Tile> NextTileToGoal = new Dictionary<Tile, Tile>();
+        Dictionary<Tile, int> costToReachTile = new Dictionary<Tile, int>();
+
+        PriorityQueue<Tile> frontier = new PriorityQueue<Tile>();
+        frontier.Enqueue(goal, 0);
+        costToReachTile[goal] = 0;
+
+        while (frontier.count > 0)
+        {
+            Tile curTile = frontier.Dequeue();
+            if (curTile == start)
+                break;
+
+            foreach (var link in curTile.GetLinksNeighbors())
+            {
+                int newCost = costToReachTile[curTile] + link.cost;
+                if (costToReachTile.ContainsKey(link.GetEnd()) == false || newCost < costToReachTile[link.GetEnd()])
+                {
+                    costToReachTile[link.GetEnd()] = newCost;
+                    int priority = newCost + (int) Vector2Int.Distance(link.GetEnd().GetPosition(), start.GetPosition());
+                    frontier.Enqueue(link.GetEnd(), (int) priority);
+                    NextTileToGoal[link.GetEnd()] = curTile;
+                }
+            }
+        }
+
+        if (NextTileToGoal.ContainsKey(start) == false)
+        {
+            return null;
+        }
+
+        Queue<Tile> path = new Queue<Tile>();
+        Tile pathTile = start;
+        while (goal != pathTile)
+        {
+            pathTile = NextTileToGoal[pathTile];
+            path.Enqueue(pathTile);
+        }
+        return path;
+    }
 }

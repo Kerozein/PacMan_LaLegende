@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] public Vector2Int enemyPosition;
     [SerializeField] public GameObject _player;
     [SerializeField] public float speed = 1;
+    [SerializeField] private bool _movable = false;
     public GraphController _graphController;
 
     private void Start()
@@ -20,22 +21,25 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        enemyPosition = Toolbox.ConvertWorldPosToGraphPos(gameObject.transform.position, _graphController);
-        Tile start = _graphController.graph.GetTile(GetComponent<EnemyController>().enemyPosition);
-        Tile end = _graphController.graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
-        Queue<Tile> path = Toolbox.Dijkstra(start, end, _graphController.simplifiedGraph);
-        if(path != null)
+        if (_movable)
         {
-            Tile tile = path.Dequeue();
-            if (tile != null)
+            enemyPosition = Toolbox.ConvertWorldPosToGraphPos(gameObject.transform.position, _graphController);
+            Tile start = _graphController.graph.GetTile(GetComponent<EnemyController>().enemyPosition);
+            Tile end = _graphController.graph.GetTile(_player.GetComponent<PlayerController>().playerPosition);
+            Queue<Tile> path = Toolbox.AStar(start, end, _graphController.simplifiedGraph);
+            if (path != null)
             {
-                Vector2Int tilePosition = tile.GetPosition();
-                Direction direction = Direction.Null;
-                if (tilePosition.x > enemyPosition.x) direction = Direction.East;
-                if (tilePosition.x < enemyPosition.x) direction = Direction.West;
-                if (tilePosition.y > enemyPosition.y) direction = Direction.North;
-                if (tilePosition.y < enemyPosition.y) direction = Direction.South;
-                MoveToward(direction);
+                Tile tile = path.Dequeue();
+                if (tile != null)
+                {
+                    Vector2Int tilePosition = tile.GetPosition();
+                    Direction direction = Direction.Null;
+                    if (tilePosition.x > enemyPosition.x) direction = Direction.East;
+                    if (tilePosition.x < enemyPosition.x) direction = Direction.West;
+                    if (tilePosition.y > enemyPosition.y) direction = Direction.North;
+                    if (tilePosition.y < enemyPosition.y) direction = Direction.South;
+                    MoveToward(direction);
+                }
             }
         }
     }
@@ -61,6 +65,16 @@ public class EnemyController : MonoBehaviour
         {
             gameObject.transform.position += Vector3.left * speed * Time.deltaTime;
         }
+    }
+
+    public void StartMovement()
+    {
+        _movable = true;
+    }
+
+    public void StopMovement()
+    {
+        _movable = false;
     }
 
 }

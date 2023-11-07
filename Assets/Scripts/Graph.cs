@@ -153,46 +153,6 @@ public class Graph
         return _nodes.Values.ToList();
     }
 
-    public void Simplify()
-    {
-        foreach (var node in _nodes)
-        {
-            foreach (var link in node.Value.GetLinksNeighbors())
-            {
-                Tile start = link.GetStart();
-                foreach (var neighbor in start.GetNeighbors())
-                {
-                    if (neighbor.GetNeighbors().Count == 2)
-                    {
-                        int cost = link.cost;
-                        Direction direction = GetDirection(start, neighbor);
-                        Tile end = neighbor;
-                        while (end != null)
-                        {
-                            Link oldLink = GetLink(start, end);
-                            if (oldLink != null)
-                            {
-                                start = end;
-                                cost += oldLink.cost;
-                                neighbor.RemoveLink(oldLink);
-                                Tile tryEnd = GetVoisin(end, direction);
-                                if (tryEnd != null)
-                                {
-                                    end = tryEnd;
-                                }
-                                else break;
-                            }
-                            else break;
-                        }
-                        link.SetEnd(end);
-                        link.cost = cost;
-                    }
-                }
-            }
-            
-        }
-    }
-
     public Direction GetDirection(Tile start, Tile end)
     {
         Direction direction = Direction.Null;
@@ -208,35 +168,6 @@ public class Graph
         foreach (var link in start.GetLinksNeighbors())
         {
             if(link.GetEnd() == end) return link;
-        }
-        return null;
-    }
-
-    public Tile GetVoisin(Tile start, Direction direction)
-    {
-        Vector2Int offset;
-        switch (direction)
-        {
-            case Direction.North:
-                offset = Vector2Int.up;
-                break;
-            case Direction.South:
-                offset = Vector2Int.down;
-                break;
-            case Direction.West:
-                offset = Vector2Int.left;
-                break;
-            case Direction.East: 
-                offset = Vector2Int.right;
-                break;
-            default:
-                offset = Vector2Int.zero;
-                break;
-        }
-
-        if (_nodes.ContainsKey(start.GetPosition() + offset))
-        {
-            return _nodes[start.GetPosition() + offset];
         }
         return null;
     }

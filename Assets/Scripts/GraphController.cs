@@ -24,7 +24,6 @@ public class GraphController : MonoBehaviour
         graph.Init();
 
         simplifiedGraph = graph;
-        simplifiedGraph.Simplify();
     }
 
     private Tuple<Vector2, Vector2> GetGridBounds()
